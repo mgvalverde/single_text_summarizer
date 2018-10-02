@@ -154,7 +154,24 @@ fileConn<-file(savFile)
 writeLines(c(paste0(rep('#', 100), collapse = ''),finalsum, paste0(rep('#', 100), collapse = '')) , fileConn)
 close(fileConn)
 ```
-
+The summary is:
+```
+His hair was fair and the skin on his face, which used to be pink, was red and rough from cheap
+soap, old razor blades and the cold of the winter that had just ended. He moved to the window. The
+telescreen had a microphone, so the Thought Police could listen to Winston at any time of the day or
+night. And he could see the Ministry of Love - Miniluv - which was responsible for law and order.
+Earlier that morning, a terrible noise from the big telescreen at the Ministry of Truth had called all the
+workers to the centre of the hall for the Two Minutes Hate. Goldstein began to speak in his sheep-
+like voice: criticising the Party, making nasty attacks on Big Brother, demanding peace with Eurasia.
+Goldstein had also written a book, a terrible book, a book against the Party. As Goldstein’s face filled
+the telescreen and Eurasian soldiers marched behind him, the Hate grew. Winston was shouting too; it
+was impossible not to. A girl behind him, with thick, dark hair was screaming ’Pig! Pig!’ at Goldstein,
+and suddenly she picked up a heavy Newspeak dictionary and threw it at the telescreen. He disliked
+nearly all women, especially young and pretty ones. As the screaming at Goldstein increased, Wins-
+ton’s dislike of the girl turned to hate. There was sometimes an intelligence in his face that suggested
+- perhaps - that he might question the official Party beliefs. Winston wrote the date in his diary: April
+4th 1984. You were, in Newspeak, vaporized.
+```
 
 #### Post -- clustering word extraction -- tag cloud
 
