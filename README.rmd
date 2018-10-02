@@ -1,13 +1,3 @@
----
-title: Single text summarizer 
-number_sections: true
-include: 
-  - \usepackage{amsmath}
-output: 
-  html_document:
-    keep_md: true
----
-
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   fig.path = "README_figs/README-"
@@ -22,11 +12,9 @@ Currently the input only accepts .txt files and the working language is English.
 
 Nowadays we are sorrounded by tons of information. It comes from many different sources, and not all of it is relevant. The time limitation is a fact that must be also taken into account. For such reason, community is gathering efforts about ways to syntethize that information, keeping just the crucial part. Using machine learning and NPL we can deal with it.
 
-Summarizing algorithms are frequently found to extract the main topics in a collection of documents. I haven't found many examples for single text summarizing. Stil, one interesting example can be found in the repo holding the package [*textmineR*](https://github.com/TommyJones/textmineR). There, the **centrality eigen-vector** algorimth is used. Here its results will be compared to those given by the **hierarchical clustering** based solution.
+Summarizing algorithms are frequently found to extract the main topics in a collection of documents. I haven't found many examples for single text summarizing. Stil, one interesting example can be found in the repo holding the package [*textmineR*](https://github.com/TommyJones/textmineR). There, the **centrality eigen-vector** algorimth is used for a document summarization example. Here summaries will be made using **hierarchical clustering** and **centrality eigen-vector** algoritmhs and compared.
 
-As an example text, it is used the first chapter of the George Orwell's novel [1984](https://english-e-reader.net/book/1984-george-orwell). The book can be found, as many other, on the website [english-e-reader.net](https://english-e-reader.net/).
-
-
+As an example text, it is used the first chapter of the George Orwell's novel [1984](https://english-e-reader.net/book/1984-george-orwell). The book can be found, as many other, on the website [english-e-reader.net](https://english-e-reader.net/). And of course, if you haven't read it, spoiler alert!
 
 ## Code description
 
@@ -40,8 +28,6 @@ theName <- unlist(strsplit(fileName,'[.]'))[1]
 
 myText <- readChar(fileName, file.info(fileName)$size)
 ```
-
-
 
 In the first step all the prepocessing tasks are carried out. The text is split into the different sentences as shown in the following functions. For such, regular expression are used. 
 
@@ -73,8 +59,6 @@ names(doc) <- seq(along = doc)
 ```
 One of the most important steps in the previous functions is the removal of the very short sentenced. Those with less than n words. The reason behind is to leave out short answers. Despite they don't provide any information, due to its repetitions they could appear in the summary, instead of a more interesting sentence. 
 
-#### Hierarchical clustering based solution.
-
 Turn those sentences into a Document-Term Matrix (DTM), using stemming and bi-grams. DTM is a sparse matrix in which each document is represented by a term vector which, in turn, indicates if the a given term is present or not in it. The library *textmineR* is able to make the DTM at the same time it filters stop-words and uses stemming. As stopword list two list have been used, one of them from package *tm*. The stemming algorithm used is Porter's. 
 ```{r, results=FALSE}
 dtm <- CreateDtm(doc, 
@@ -83,6 +67,8 @@ dtm <- CreateDtm(doc,
                                   tm::stopwords("SMART")), # this is the default value
                  stem_lemma_function = function(x) SnowballC::wordStem(x, "porter"))
 ```
+
+### Hierarchical clustering based solution.
 
 Term frequency matrix is required to get the TF-IDF matrix. To get this matrices, DTM is needed. TFIDF shows how important is a term in a document corpus, and it is used to calculate the distance matrix.
 ```{r}
@@ -164,7 +150,7 @@ finalsum
 ```
 
 
-### Post -- clustering word extraction -- tag cloud
+#### Post -- clustering word extraction -- tag cloud
 
 As final touch, the following code is used to get a tag cloud from the most important words in the chapter. Words from each cluster are extracted. We are considering the TFIDF metric to select the most important ones. 
 This function will be used in the next chunk.
@@ -224,7 +210,7 @@ wcall <-wordcloud::wordcloud(words = names(colSums(tfidf)),
 
 
 
-#### Hierarchical clustering based solution.
+### Hierarchical clustering based solution.
 
 The full code is in the script *evc_code.r*. The preprocessing carried out in this case is the same than the previous one.
 
@@ -263,7 +249,8 @@ nn <- apply(nn, 1, function(x){
 
 nn <- nn * 100
 
-g <- igraph::graph_from_adjacency_matrix(nn, mode = "directed", weighted = TRUE)
+g <- igraph::graph_from_adjacency_matrix(nn, mode = "directed", weighted = TRUE) 
+# network can be plotted: plot(g)
 ```
 
 Calculate eigenvalue centrality.
@@ -292,8 +279,7 @@ if (!file.exists('outputs')){
 
 savFile = paste0('outputs/','summary',nsentences,'sentences_',theName,'_ec.txt')
 fileConn<-file(savFile)
-
-writeLines(c('###########', finalsum, '###########' ) , fileConn)
+writeLines(c(paste0(rep('#', 100), collapse = ''),finalsum, paste0(rep('#', 100), collapse = '')) , fileConn)
 close(fileConn)
 ```
 
