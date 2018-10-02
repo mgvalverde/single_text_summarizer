@@ -4,22 +4,16 @@ __In this repository you can find R code for summarizing one single text. The sc
 
 Currently the input only accepts .txt files and the working language is English.
 
+### Intro
 
 Nowadays we are sorrounded by tons of information. It comes from many different sources, and not all of it is relevant. The time limitation is a fact that must be also taken into account. For such reason, community is gathering efforts about ways to syntethize that information, keeping just the crucial part. Using machine learning and NPL we can deal with it.
 
-Summarizing algorithms are frequently found to extract the main topics in a collection of documents. I haven't found many examples for single text summarizing. Stil, one interesting example can be found in the repo holding the package [*textmineR*](https://github.com/TommyJones/textmineR). There, the **centrality eigen-vector** algorimth is used. Here its results will be compared to those given by the **hierarchical clustering** based solution.
+Summarizing algorithms are frequently found to extract the main topics in a collection of documents. I haven't found many examples for single text summarizing. Stil, one interesting example can be found in the repo holding the package [*textmineR*](https://github.com/TommyJones/textmineR). In that example, a **centrality eigen-vector** based solution is used. Here, results achieved using it will be compared to those given by the **hierarchical clustering** based solution.
 
 As an example text, it is used the first chapter of the George Orwell's novel [1984](https://english-e-reader.net/book/1984-george-orwell). The book can be found, as many other, on the website [english-e-reader.net](https://english-e-reader.net/).
 
-## Intro
 
-### NLP - steam, preprocessing and all that stuff
-
-### Hierarchical clustering
-
-### Central eigenvector
-
-### Code
+## Code description.
 
 A .txt document must be selected and loaded. This will be the target document for both examples.
 
@@ -39,7 +33,7 @@ theName <- unlist(strsplit(fileName,'[.]'))[1]
 myText <- readChar(fileName, file.info(fileName)$size)
 ```
 
-#### Hierarchical clustering based solution.
+### Hierarchical clustering based solution.
 
 In the first step all the prepocessing tasks are carried out. The text is split into the different sentences as shown in the following functions. For such, regular expression are used. 
 
@@ -95,9 +89,7 @@ tfidf <- tfidf[-which(apply(tfidf,1,sum) <= 0),]
 
 As distance metric, cosine similarity will be used. It is given by the following formula.
 
-\begin{equation}
-\text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} = \frac{ \sum\limits_{i=1}^{n}{A_i  B_i} }{ \sqrt{\sum\limits_{i=1}^{n}{A_i^2}}  \sqrt{\sum\limits_{i=1}^{n}{B_i^2}} }
-\end{equation}
+![](https://latex.codecogs.com/gif.latex?\text{similarity}&space;=&space;\cos(\theta)&space;=&space;\frac{\mathbf{A}&space;\cdot&space;\mathbf{B}}{\|\mathbf{A}\|&space;\|\mathbf{B}\|}&space;=&space;\frac{&space;\sum\limits_{i=1}^{n}{A_i&space;B_i}&space;}{&space;\sqrt{\sum\limits_{i=1}^{n}{A_i^2}}&space;\sqrt{\sum\limits_{i=1}^{n}{B_i^2}}&space;})
 
 Calculate document-to-document cosine similarity and get distances.
 
@@ -164,7 +156,7 @@ close(fileConn)
 ```
 
 
-### Post -- clustering word extraction -- tag cloud
+#### Post -- clustering word extraction -- tag cloud
 
 As final touch, the following code is used to get a tag cloud from the most important words in the chapter. Words from each cluster are extracted. We are considering the TFIDF metric to select the most important ones. 
 This function will be used in the next chunk.
@@ -233,4 +225,4 @@ wcall <-wordcloud::wordcloud(words = names(colSums(tfidf)),
 
 
 
-# Central eigenvector based solution.
+### Central eigenvector based solution.
