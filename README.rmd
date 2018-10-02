@@ -16,8 +16,9 @@ knitr::opts_chunk$set(
 
 __In this repository you can find R code for summarizing one single text. The scripts are based on the package: *textmineR*.__
 
-Currently the input only accepts .txt files and the working language is English.
+Currently the input only accepts .txt files and the working language is English. Any contribution or advise is wellcome.
 
+## Intro
 
 Nowadays we are sorrounded by tons of information. It comes from many different sources, and not all of it is relevant. The time limitation is a fact that must be also taken into account. For such reason, community is gathering efforts about ways to syntethize that information, keeping just the crucial part. Using machine learning and NPL we can deal with it.
 
@@ -25,15 +26,9 @@ Summarizing algorithms are frequently found to extract the main topics in a coll
 
 As an example text, it is used the first chapter of the George Orwell's novel [1984](https://english-e-reader.net/book/1984-george-orwell). The book can be found, as many other, on the website [english-e-reader.net](https://english-e-reader.net/).
 
-## Intro
 
-### NLP - steam, preprocessing and all that stuff
 
-### Hierarchical clustering
-
-### Central eigenvector
-
-### Code
+## Code description
 
 A .txt document must be selected and loaded. This will be the target document for both examples.
 
@@ -46,7 +41,7 @@ theName <- unlist(strsplit(fileName,'[.]'))[1]
 myText <- readChar(fileName, file.info(fileName)$size)
 ```
 
-#### Hierarchical clustering based solution.
+
 
 In the first step all the prepocessing tasks are carried out. The text is split into the different sentences as shown in the following functions. For such, regular expression are used. 
 
@@ -77,6 +72,8 @@ doc <- cleanText(myText, 4)
 names(doc) <- seq(along = doc)
 ```
 One of the most important steps in the previous functions is the removal of the very short sentenced. Those with less than n words. The reason behind is to leave out short answers. Despite they don't provide any information, due to its repetitions they could appear in the summary, instead of a more interesting sentence. 
+
+#### Hierarchical clustering based solution.
 
 Turn those sentences into a Document-Term Matrix (DTM), using stemming and bi-grams. DTM is a sparse matrix in which each document is represented by a term vector which, in turn, indicates if the a given term is present or not in it. The library *textmineR* is able to make the DTM at the same time it filters stop-words and uses stemming. As stopword list two list have been used, one of them from package *tm*. The stemming algorithm used is Porter's. 
 ```{r, results=FALSE}
@@ -131,7 +128,7 @@ plot(hc, main = "Hierarchical clustering",
 rect.hclust(hc, nsentences, border = "red")
 ```
 
-<!-- Now, the sumary must be made. First, a list of sentences must be made. Those sentences are going to be taken from the different clusters.  -->
+
 To select the most representative sentence DTM has been used. The chosen sentences/documents are those with a higher euclidean norm within each cluster. It is considered that a sentence with a higher norm will also contain more representative term, and it is, more information. This option will lead to a more extense summary, what must be taken into account. Another feasible option is to take random sentences from each cluster, but it was discarded becasue the result wasn't so good.
 ```{r}
 summary_sentences <- unlist(lapply(unique(clustering), function(x, document,weights){    # term list according to the cluster classification
@@ -160,6 +157,12 @@ writeLines(c(paste0(rep('#', 100), collapse = ''),finalsum, paste0(rep('#', 100)
 close(fileConn)
 ```
 
+The **summary** is:
+
+```{r, echo=FALSE}
+finalsum
+```
+
 
 ### Post -- clustering word extraction -- tag cloud
 
@@ -176,7 +179,7 @@ cluster_words <- lapply(unique(clustering), function(x){
 })
 ```
 
-Here, we create a summary table of the top words defining each cluster
+Here, we create a summary table of the top words defining each cluster.
 ```{r}
 cluster_summary <- data.frame(cluster = unique(clustering),
                               size = as.numeric(table(clustering)),
@@ -221,5 +224,76 @@ wcall <-wordcloud::wordcloud(words = names(colSums(tfidf)),
 
 
 
+#### Hierarchical clustering based solution.
 
-# Central eigenvector based solution.
+The full code is in the script *evc_code.r*. The preprocessing carried out in this case is the same than the previous one.
+
+Analogously, TFIDF matrix is obtained
+```{r}
+idf <- log(nrow(dtm) / colSums(dtm > 0))
+
+tfidf <- t(dtm) * idf
+
+tfidf <- t(tfidf)
+```
+
+
+Again, cosine similarity is the metric chosen for the problem.
+
+```{r}
+csim <- tfidf / sqrt(rowSums(tfidf * tfidf))
+
+csim <- csim %*% t(csim)
+
+
+p_words <- colSums(dtm) / sum(dtm)  #
+p_sent <- rowSums(dtm)
+```
+
+This cosine similarity matrix is turned into a nearest-neighbor network.
+```{r}
+nn <- csim
+
+diag(nn) <- 0
+
+nn <- apply(nn, 1, function(x){
+  x[ x < sort(x, decreasing = TRUE)[ 2 ] ] <- 0
+  x
+})
+
+nn <- nn * 100
+
+g <- igraph::graph_from_adjacency_matrix(nn, mode = "directed", weighted = TRUE)
+```
+
+Calculate eigenvalue centrality.
+```{r}
+ec <- igraph::eigen_centrality(g)
+```
+
+Return the top central sentences as the summary.
+```{r}
+nsentences <- 15
+summary <- doc[ names(ec[[ 1 ]])[ order(ec[[ 1 ]], decreasing = T) ][ 1:nsentences ] ]
+
+summary <- summary[ order(as.numeric(names(summary))) ]
+```
+
+In this case, the **summary** is:
+```{r}
+finalsum <- paste(c(summary,''), collapse = ". ")
+finalsum
+```
+
+An again, if saving the result is required:
+```{r, eval=FALSE}
+if (!file.exists('outputs')){
+  dir.create('outputs')}
+
+savFile = paste0('outputs/','summary',nsentences,'sentences_',theName,'_ec.txt')
+fileConn<-file(savFile)
+
+writeLines(c('###########', finalsum, '###########' ) , fileConn)
+close(fileConn)
+```
+
