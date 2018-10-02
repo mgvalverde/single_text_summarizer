@@ -66,7 +66,7 @@ names(doc) <- seq(along = doc)
 ```
 One of the most important steps in the previous functions is the removal of the very short sentenced. Those with less than n words. The reason behind is to leave out short answers. Despite they don't provide any information, due to its repetitions they could appear in the summary, instead of a more interesting sentence. 
 
-#### Hierarchical clustering based solution.
+### Hierarchical clustering based solution.
 
 Turn those sentences into a Document-Term Matrix (DTM), using stemming and bi-grams. DTM is a sparse matrix in which each document is represented by a term vector which, in turn, indicates if the a given term is present or not in it. The library *textmineR* is able to make the DTM at the same time it filters stop-words and uses stemming. As stopword list two list have been used, one of them from package *tm*. The stemming algorithm used is Porter's. 
 
@@ -165,7 +165,7 @@ The **summary** is:
 ```
 
 
-### Post -- clustering word extraction -- tag cloud
+#### Post -- clustering word extraction -- tag cloud
 
 As final touch, the following code is used to get a tag cloud from the most important words in the chapter. Words from each cluster are extracted. We are considering the TFIDF metric to select the most important ones. 
 This function will be used in the next chunk.
@@ -233,7 +233,7 @@ wcall <-wordcloud::wordcloud(words = names(colSums(tfidf)),
 
 
 
-#### Hierarchical clustering based solution.
+### Eigen-value centrality based solution.
 
 The full code is in the script *evc_code.r*. The preprocessing carried out in this case is the same than the previous one.
 
