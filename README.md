@@ -1,13 +1,3 @@
----
-title: Single text summarizer 
-number_sections: true
-include: 
-  - \usepackage{amsmath}
-output: 
-  html_document:
-    keep_md: true
----
-
 
 
 __In this repository you can find R code for summarizing one single text. The scripts are based on the package: *textmineR*.__
