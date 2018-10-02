@@ -91,9 +91,7 @@ tfidf <- tfidf[-which(apply(tfidf,1,sum) <= 0),]
 
 As distance metric, cosine similarity will be used. It is given by the following formula.
 
-\begin{equation}
-\text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} = \frac{ \sum\limits_{i=1}^{n}{A_i  B_i} }{ \sqrt{\sum\limits_{i=1}^{n}{A_i^2}}  \sqrt{\sum\limits_{i=1}^{n}{B_i^2}} }
-\end{equation}
+![](https://latex.codecogs.com/gif.latex?\text{similarity}&space;=&space;\cos(\theta)&space;=&space;\frac{\mathbf{A}&space;\cdot&space;\mathbf{B}}{\|\mathbf{A}\|&space;\|\mathbf{B}\|}&space;=&space;\frac{&space;\sum\limits_{i=1}^{n}{A_i&space;B_i}&space;}{&space;\sqrt{\sum\limits_{i=1}^{n}{A_i^2}}&space;\sqrt{\sum\limits_{i=1}^{n}{B_i^2}}&space;})
 
 Calculate document-to-document cosine similarity and get distances.
 
